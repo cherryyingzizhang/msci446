@@ -1,3 +1,6 @@
+##########################################
+#parks by community area
+##########################################
 library(rgdal)
 library(sp)
 library(dplyr)
@@ -10,3 +13,21 @@ names(chicagoparksdf) <- c("ward", "acres")
 parkacresbyward <- aggregate(.~ward, data=chicagoparksdf, mean)
 
 plot(chicagoparks)
+
+##########################################
+#poverty & race by community area
+##########################################
+
+#did most of the conversion in excel
+library(readxl)
+censusdata <- read_excel("4A/MSCI 446/R/Census-Data-by-Chicago-Community-Area-2017 (2).xlsx")
+censusdata <- data.frame(censusdata$Community, 
+                         censusdata$CommunityAreaNumber, 
+                         censusdata$Hispanic, 
+                         censusdata$Black,
+                         censusdata$White,
+                         censusdata$Asian,
+                         censusdata$Other,
+                         censusdata$PercentChildrenInPoverty)
+names(censusdata) <- c('Community', 'communityAreaNumber', 'Hispanic', 'Black', 'White', 'Asian', 'Other', 'PercentChildrenInPoverty')
+write.csv(censusdata, 'censusdataByCommunityArea.csv')
