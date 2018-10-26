@@ -17,4 +17,8 @@ schooldf$rating_num[schooldf$rating=='LEVEL 2+'] <- 3
 schooldf$rating_num[schooldf$rating=='LEVEL 1'] <- 4
 schooldf$rating_num[schooldf$rating=='LEVEL 1+'] <- 5
 
-# cat("\014") 
+# Calculating average rating by ward
+avg <- aggregate(schooldf$rating_num, list(schooldf$ward), mean)
+names(avg) <- c('ward', 'average rating')
+
+# cat("\014") - Clear console
