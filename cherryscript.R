@@ -9,7 +9,7 @@ library(tidyverse)
 library(raster)
 
 chicagoparks <- readOGR('4A/MSCI 446/R/chicagoparksshapefile2', 'geo_export_287c1e81-adfc-4076-bbd4-7ac4b1ca62c2')
-chicagocommunityareas <- readOGR('4A/MSCI 446/R/communityareashapefile', 'geo_export_f2c553e7-eb62-4773-9655-8037a1bdd109')
+chicagocommunityareas <- readOGR('4A/MSCI 446/R/communityareashapefile', 'geo_export_f2c553e7-eb62-4773-9655-8037a1bdd109', stringsAsFactors = FALSE)
 
 #TEST TO SEE HOW TO ACTUALLY GET INTERSECTION AND AREA OF INTERSECTION
 horanpark <- chicagoparks[which(chicagoparks@data$park=="HORAN (ALBERT)"),]
@@ -29,6 +29,23 @@ for(i in 1:nrow(chicagocommunityareas)) {
   }
   totalParkAreaForCommunityAreas[i] <- totalArea
 }
+
+
+library(readxl)
+censusdata <- read_excel("4A/MSCI 446/R/Census-Data-by-Chicago-Community-Area-2017 (2).xlsx")
+censusdata <- data.frame(censusdata$Community, censusdata$CommunityAreaNumber)
+names(censusdata) <- c('Community', 'communityAreaNumber')
+censusdata$Community <- toupper(censusdata$Community)
+chicagocommunityareas@data$community[75] <- 'O\'HARE'
+communityAreaNumber <- rep(0, nrow(chicagocommunityareas))
+for(i in 1:nrow(chicagocommunityareas)) {
+  i
+  communityAreaNumber[i] <- censusdata[which(censusdata$Community==chicagocommunityareas@data$community[i]),2]
+}
+
+totalParkAreaDF <- data.frame(chicagocommunityareas@data$community, communityAreaNumber, totalParkAreaForCommunityAreas)
+names(totalParkAreaDF) <- c('Community', 'communityAreaNumber', 'totalParkArea')
+write.csv(totalParkAreaDF, 'totalParkAreaByCommunityArea.csv')
 
 
 
