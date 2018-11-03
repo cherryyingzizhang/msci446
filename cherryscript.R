@@ -17,7 +17,7 @@ eastgarfield <- chicagocommunityareas[which(chicagocommunityareas@data$community
 Intersects <- raster::intersect(horanpark, eastgarfield)
 area(Intersects)
 
-#RUN THIS CODE FOR TOTAL PARK AREA FOR EACH COMMUNITY AREA
+#RUN THIS CODE FOR TOTAL PARK AREA FOR EACH COMMUNITY AREA#################################
 totalParkAreaForCommunityAreas <- rep(0, nrow(chicagocommunityareas))
 for(i in 1:nrow(chicagocommunityareas)) {
   totalArea <- 0
@@ -29,8 +29,7 @@ for(i in 1:nrow(chicagocommunityareas)) {
   }
   totalParkAreaForCommunityAreas[i] <- totalArea
 }
-
-
+#print the dataframe consisting of three columns: commArea, commAreaNum, and totalParkArea
 library(readxl)
 censusdata <- read_excel("4A/MSCI 446/R/Census-Data-by-Chicago-Community-Area-2017 (2).xlsx")
 censusdata <- data.frame(censusdata$Community, censusdata$CommunityAreaNumber)
@@ -42,12 +41,10 @@ for(i in 1:nrow(chicagocommunityareas)) {
   i
   communityAreaNumber[i] <- censusdata[which(censusdata$Community==chicagocommunityareas@data$community[i]),2]
 }
-
 totalParkAreaDF <- data.frame(chicagocommunityareas@data$community, communityAreaNumber, totalParkAreaForCommunityAreas)
 names(totalParkAreaDF) <- c('Community', 'communityAreaNumber', 'totalParkArea')
 write.csv(totalParkAreaDF, 'totalParkAreaByCommunityArea.csv')
-
-
+#RUN THIS CODE FOR TOTAL PARK AREA FOR EACH COMMUNITY AREA#################################
 
 #OLD CODE: CHICAGO PARKS BY WARDS
 #chicagoparksdf <- data.frame(c(chicagoparks$ward), c(chicagoparks$acres))
