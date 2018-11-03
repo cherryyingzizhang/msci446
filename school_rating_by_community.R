@@ -36,3 +36,7 @@ avg_commu_ordered <- avg_commu[, c(2, 1, 3)]
 avg_commu_ordered <- avg_commu_ordered[with(avg_commu_ordered, order(number)), ]
 
 # cat("\014") - Clear console
+
+
+#import
+# crimes2001 <- read.csv('Crimes_-_2001_to_present.csv', stringsAsFactors = TRUE)

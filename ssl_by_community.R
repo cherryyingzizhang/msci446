@@ -7,7 +7,7 @@ names(ssl) <- c('score', 'community')
 names(community) <- c('number', 'name')
 
 # Eliminate rows with blank community
-ssl <- ssl[!(is.na(ssl$community) | ssl$community==""), ]
+ssl <- ssl[!(is.na(ssl$community) | ssl$community==''), ]
 
 # Standardize community names
 ssl[, 'community'] = toupper(ssl[, 'community'])
