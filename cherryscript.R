@@ -77,12 +77,11 @@ library(sf)
 library(tidyverse)
 library(raster)
 
+#Code for numHospitalsPerCommunityArea#################################
 hospitals <- readOGR('4A/MSCI 446/R/Hospitals', 'Hospitals', stringsAsFactors = FALSE)
 numHospitalsPerCommunityArea <- as.data.frame(table(hospitals@data$AREA_NUMBE))
 names(numHospitalsPerCommunityArea) <- c('communityAreaNum', 'numHospitals')
 numHospitalsPerCommunityArea$communityAreaNum <- as.numeric(levels(numHospitalsPerCommunityArea$communityAreaNum))
-#numHospitalsPerCommunityArea$communityAreaNum <- as.numeric(numHospitalsPerCommunityArea$communityAreaNum)
-
 for (i in 1:77) {
   if (sum(numHospitalsPerCommunityArea$communityAreaNum == i) == 0) {
     newDF <- data.frame(i,0)
@@ -90,7 +89,54 @@ for (i in 1:77) {
     numHospitalsPerCommunityArea <- rbind(numHospitalsPerCommunityArea, newDF)
   }
 }
+numHospitalsPerCommunityArea <- numHospitalsPerCommunityArea[order(numHospitalsPerCommunityArea$communityAreaNum),] 
+var(numHospitalsPerCommunityArea$numHospitals)
+remove(hospitals, newDF)
 
+#Code for teenMomRatePerCommunityArea#################################
+teenMomsData <- read.csv('4A/MSCI 446/R/Public_Health_Statistics_-_Births_to_mothers_aged_15-19_years_old_in_Chicago__by_year__1999-2009.csv')
+
+#community 32 and 9 have NA values... do median imputation for these NA values
+teenBirthRates <- data.frame(teenMomsData$Teen.Birth.Rate.1999,
+                               teenMomsData$Teen.Birth.Rate..2000,
+                               teenMomsData$Teen.Birth.Rate.2001,
+                               teenMomsData$Teen.Birth.Rate.2002,
+                               teenMomsData$Teen.Birth.Rate.2003,
+                               teenMomsData$Teen.Birth.Rate.2004,
+                               teenMomsData$Teen.Birth.Rate.2005,
+                               teenMomsData$Teen.Birth.Rate.2006,
+                               teenMomsData$Teen.Birth.Rate.2007,
+                               teenMomsData$Teen.Birth.Rate.2008,
+                               teenMomsData$Teen.Birth.Rate.2009)
+teenBirthRates <- teenBirthRates[1:nrow(teenBirthRates)-1,]
+teenBirthRatesTransposed <- t(teenBirthRates)
+rownames(teenBirthRatesTransposed) <- NULL
+colnames(teenBirthRatesTransposed) = seq(1:77)
+#find the mean teenMomBirthRate for years 1999-2009. Use this as each community area's "teenMomBirthRate"
+teenMomRatePerCommunityAreaVec=c()
+for(i in 1:ncol(teenBirthRatesTransposed)){
+  teenBirthRatesTransposed[is.na(teenBirthRatesTransposed[,i]), i] <- median(teenBirthRatesTransposed[,i], na.rm = TRUE)
+  teenMomRatePerCommunityAreaVec[i] = mean(teenBirthRatesTransposed[,i])
+}
+
+teenMomRatePerCommunityArea <- data.frame(teenMomsData[1:nrow(teenMomsData)-1,1], teenMomRatePerCommunityAreaVec)
+names(teenMomRatePerCommunityArea) <- c('communityAreaNum', 'teenMomRate')
+remove(teenBirthRates, teenBirthRatesTransposed, teenMomRatePerCommunityAreaVec, teenMomsData)
+
+#Code for infantMortalityRatePerCommunityArea#################################
+infantMortalityData <- read.csv('4A/MSCI 446/R/Public_Health_Statistics-_Infant_mortality_in_Chicago__2005__2009.csv')
+infantMortalityData <- infantMortalityData[1:nrow(infantMortalityData)-1,]
+infantMortalityRatePerCommunityArea <- data.frame(infantMortalityData$ï..Community.Area, infantMortalityData$Average.Infant.Mortality.Rate.2005...2009)
+names(infantMortalityRatePerCommunityArea) <- c('communityAreaNum', 'infantMortalityRate')
+remove(infantMortalityData)
+
+#write all three to csv
+publicHealthData <- data.frame(infantMortalityRatePerCommunityArea$communityAreaNum,
+                               numHospitalsPerCommunityArea$numHospitals,
+                               teenMomRatePerCommunityArea$teenMomRate,
+                               infantMortalityRatePerCommunityArea$infantMortalityRate)
+names(publicHealthData) <- c('communityAreaNum', 'numHospitals', 'teenMomRate', 'infantMortalityRate')
+write.csv(publicHealthData, 'publicHealth.csv')
 
 ##########################################
 #Combining all the data
@@ -102,6 +148,7 @@ censusData <- read.csv("4A/MSCI 446/R/explanatoryvariables/censusdataByCommunity
 typesOfCrimes <- read.csv("4A/MSCI 446/R/explanatoryvariables/crime_count_in_community.csv")
 predictedVarDF <- read.csv("4A/MSCI 446/R/explanatoryvariables/total_crime_by_community.csv")
 totalParkArea <- read.csv("4A/MSCI 446/R/explanatoryvariables/totalParkAreaByCommunityArea.csv")
+publicHealth <- read.csv("4A/MSCI 446/R/explanatoryvariables/publicHealth.csv")
 
 #because totalParkArea dataframe is not sorted by ascending community area number:
 totalParkArea <- totalParkArea[order(totalParkArea$communityAreaNumber),] 
@@ -112,6 +159,9 @@ predTable <- data.frame(totalParkArea$Community,
                         avgSchoolRating$avg_rating,
                         avgSSLscore$avg_rating,
                         totalParkArea$totalParkArea,
+                        publicHealth$numHospitals,
+                        publicHealth$teenMomRate,
+                        publicHealth$infantMortalityRate,
                         censusData[,4:ncol(censusData)],
                         typesOfCrimes[,3:ncol(typesOfCrimes)]
 )
@@ -122,6 +172,9 @@ names(predTable) <- c(
   "avgSchoolRating",
   "avgSSLRating",
   "totalParkArea",
+  "numHospitals",
+  "teenMomRate",
+  "infantMortalityRate",
   "hispanic",
   "black",
   "white",
@@ -133,3 +186,4 @@ names(predTable) <- c(
 
 #write to csv
 write.csv(predTable, 'predTable.csv')
+remove(avgSchoolRating, avgSSLscore, censusData, typesOfCrimes, predictedVarDF, totalParkArea, publicHealth)
