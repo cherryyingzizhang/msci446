@@ -32,49 +32,27 @@ count_commu_crime <- ddply(commu_crime, .(commu_crime$community, commu_crime$typ
 names(count_commu_crime) <- c("community", "type", "count")
 
 count <- spread(count_commu_crime, key = type, value = count)
+count[is.na(count)] <- 0
+
+# population
+population <- data.frame(population_chicago$GeogKey,
+                        population_chicago$Geog,
+                        population_chicago$`Total Population`)
+names(population) <- c('community', 'community name', 'population')
 
 # sum violent crimes and total crimes
-sum_crime <- rowSums()
+sum_crime <- data.frame(count$community)
+names(sum_crime) <- c('community')
+sum_crime$violent_crime <- NA
+sum_crime$total_crime <- NA
+sum_crime$violent_crime <- rowSums(count[, c('ASSAULT', 'BATTERY', 'CRIM SEXUAL ASSAULT',
+                                             'HOMICIDE', 'KIDNAPPING',
+                                             'VIOLENT OFFENSE INVOLVING CHILDREN',
+                                             'PUBLIC PEACE VIOLATION', 'RITUALISM',
+                                             'ROBBERY', 'ROBBERY', 'SEX OFFENSE',
+                                             'WEAPONS VIOLATION')])
+sum_crime$total_crime <- rowSums(count[, !(colnames(count) == "community")])
 
-# violent crimes
-# assault <- crime[crime$type=='ASSAULT',]
-# battery <- crime[crime$type=='BATTERY',]
-# sexAssault <- crime[crime$type=='CRIM SEXUAL ASSAULT',]
-# domestic_violence <- crime[crime$type=='DOMESTIC VIOLENCE',]
-# homicide <- crime[crime$type=='HOMICIDE',]
-# kidnapping <- crime[crime$type=='KIDNAPPING',]
-# children <- crime[crime$type=='OFFENSE INVOLVING CHILDREN' 
-#                   & (crime$description=='CRIM SEX ABUSE BY FAM MEMBER' 
-#                      | crime$description=='CHILD ABUSE'
-#                      | crime$description=='AGG SEX ASSLT OF CHILD FAM MBR'
-#                      | crime$description=='CHILD ABDUCTION'
-#                      | crime$description=='AGG CRIM SEX ABUSE FAM MEMBER'
-#                      | crime$description=='SEX ASSLT OF CHILD BY FAM MBR'),]
-# public_peace_violation <- crime[crime$type=='PUBLIC PEACE VIOLATION',]
-# ritualism <- crime[crime$type=='RITUALISM',]
-# robbery <- crime[crime$type=='ROBBERY',]
-# sexOffense <- crime[crime$type=='SEX OFFENSE',]
-# weapon <- crime[crime$type=='WEAPONS VIOLATION',]
-
-# # non-violent crimes
-# intimidation <- crime[crime$type=='INTIMIDATION',]
-# arson <- crime[crime$type=='ARSON',]
-# burglary <- crime[crime$type=='BURGLARY',]
-# criminal_damage <- crime[crime$type=='CRIMINAL DAMAGE',]
-# trepass <- crime[crime$type=='CRIMINAL TRESPASS',]
-# concealed_carry_license_violation <- crime[crime$type=='CONCEALED CARRY LICENSE VIOLATION',]
-# deceptive_practice <- crime[crime$type=='DECEPTIVE PRACTICE',]
-# gambling <- crime[crime$type=='GAMBLING',]
-# human_trafficking <- crime[crime$type=='HUMAN TRAFFICKING',]
-# interference_with_public_officer <- crime[crime$type=='INTERFERENCE WITH PUBLIC OFFICER',]
-# liquor_law_violation <- crime[crime$type=='LIQUOR LAW VIOLATION',]
-# motor_vehicle_theft <- crime[crime$type=='MOTOR VEHICLE THEFT',]
-# narcotics <- crime[crime$type=='NARCOTICS',]
-# obscenity <- crime[crime$type=='OBSCENITY',]
-# other_narcotic_violation <- crime[crime$type=='OTHER NARCOTIC VIOLATION',]
-# prostitution <- crime[crime$type=='PROSTITUTION',]
-# public_indecency <- crime[crime$type=='PUBLIC INDECENCY',]
-# stalking <- crime[crime$type=='STALKING',]
-# theft <- crime[crime$type=='THEFT',]
-# 
-# other <- crime[crime$type=='OTHER OFFENSE',]
+#merge sum_crime and population
+sum_crime <- merge(x = sum_crime, y = population, by.x = 'community', by.y = 'community', all = TRUE)
+sum_crime <- sum_crime[, c(1, 4, 5, 2, 3)]
