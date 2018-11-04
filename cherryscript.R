@@ -54,8 +54,7 @@ write.csv(totalParkAreaDF, 'totalParkAreaByCommunityArea.csv')
 ##########################################
 #poverty & race by community area
 ##########################################
-
-#did most of the conversion in excel
+#did most of the conversion in excel, and using R to just create a csv of it.
 library(readxl)
 censusdata <- read_excel("4A/MSCI 446/R/Census-Data-by-Chicago-Community-Area-2017 (2).xlsx")
 censusdata <- data.frame(censusdata$Community, 
@@ -68,3 +67,45 @@ censusdata <- data.frame(censusdata$Community,
                          censusdata$PercentChildrenInPoverty)
 names(censusdata) <- c('Community', 'communityAreaNumber', 'Hispanic', 'Black', 'White', 'Asian', 'Other', 'PercentChildrenInPoverty')
 write.csv(censusdata, 'censusdataByCommunityArea.csv')
+
+##########################################
+#Combining all the data
+##########################################
+
+avgSchoolRating <- read.csv("4A/MSCI 446/R/explanatoryvariables/avg_school_rating_by_community.csv")
+avgSSLscore <- read.csv("4A/MSCI 446/R/explanatoryvariables/avg_ssl_score_by_community.csv")
+censusData <- read.csv("4A/MSCI 446/R/explanatoryvariables/censusdataByCommunityArea.csv")
+typesOfCrimes <- read.csv("4A/MSCI 446/R/explanatoryvariables/crime_count_in_community.csv")
+predictedVarDF <- read.csv("4A/MSCI 446/R/explanatoryvariables/total_crime_by_community.csv")
+totalParkArea <- read.csv("4A/MSCI 446/R/explanatoryvariables/totalParkAreaByCommunityArea.csv")
+
+#because totalParkArea dataframe is not sorted by ascending community area number:
+totalParkArea <- totalParkArea[order(totalParkArea$communityAreaNumber),] 
+
+predTable <- data.frame(totalParkArea$Community, 
+                        totalParkArea$communityAreaNumber,
+                        predictedVarDF$violent_crime * 1000 / (predictedVarDF$population.2010.),
+                        avgSchoolRating$avg_rating,
+                        avgSSLscore$avg_rating,
+                        totalParkArea$totalParkArea,
+                        censusData[,4:ncol(censusData)],
+                        typesOfCrimes[,3:ncol(typesOfCrimes)]
+)
+names(predTable) <- c(
+  "community",
+  "communityAreaNum",
+  "percentViolentCrimePer1000Population",
+  "avgSchoolRating",
+  "avgSSLRating",
+  "totalParkArea",
+  "hispanic",
+  "black",
+  "white",
+  "asian",
+  "other",
+  "percentChildrenInPov",
+  names(typesOfCrimes[,3:ncol(typesOfCrimes)])
+)
+
+#write to csv
+write.csv(predTable, 'predTable.csv')
