@@ -38,7 +38,6 @@ censusdata$Community <- toupper(censusdata$Community)
 chicagocommunityareas@data$community[75] <- 'O\'HARE'
 communityAreaNumber <- rep(0, nrow(chicagocommunityareas))
 for(i in 1:nrow(chicagocommunityareas)) {
-  i
   communityAreaNumber[i] <- censusdata[which(censusdata$Community==chicagocommunityareas@data$community[i]),2]
 }
 totalParkAreaDF <- data.frame(chicagocommunityareas@data$community, communityAreaNumber, totalParkAreaForCommunityAreas)
@@ -67,6 +66,31 @@ censusdata <- data.frame(censusdata$Community,
                          censusdata$PercentChildrenInPoverty)
 names(censusdata) <- c('Community', 'communityAreaNumber', 'Hispanic', 'Black', 'White', 'Asian', 'Other', 'PercentChildrenInPoverty')
 write.csv(censusdata, 'censusdataByCommunityArea.csv')
+
+##########################################
+#Public Safety Data
+##########################################
+library(rgdal)
+library(sp)
+library(dplyr)
+library(sf)
+library(tidyverse)
+library(raster)
+
+hospitals <- readOGR('4A/MSCI 446/R/Hospitals', 'Hospitals', stringsAsFactors = FALSE)
+numHospitalsPerCommunityArea <- as.data.frame(table(hospitals@data$AREA_NUMBE))
+names(numHospitalsPerCommunityArea) <- c('communityAreaNum', 'numHospitals')
+numHospitalsPerCommunityArea$communityAreaNum <- as.numeric(levels(numHospitalsPerCommunityArea$communityAreaNum))
+#numHospitalsPerCommunityArea$communityAreaNum <- as.numeric(numHospitalsPerCommunityArea$communityAreaNum)
+
+for (i in 1:77) {
+  if (sum(numHospitalsPerCommunityArea$communityAreaNum == i) == 0) {
+    newDF <- data.frame(i,0)
+    names(newDF)<-c('communityAreaNum', 'numHospitals')
+    numHospitalsPerCommunityArea <- rbind(numHospitalsPerCommunityArea, newDF)
+  }
+}
+
 
 ##########################################
 #Combining all the data
