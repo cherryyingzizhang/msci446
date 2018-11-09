@@ -7,8 +7,8 @@ explanatory <- data.frame(predTable$communityAreaNum,
                           predTable$avgSSLRating,
                           predTable$totalParkArea,
                           predTable$numHospitals,
-                          100*predTable$teenMomRate,
-                          100*predTable$infantMortalityRate,
+                          predTable$teenMomRate,
+                          predTable$infantMortalityRate,
                           100*predTable$hispanic,
                           100*predTable$black,
                           100*predTable$white,
@@ -16,8 +16,8 @@ explanatory <- data.frame(predTable$communityAreaNum,
                           100*predTable$other,
                           100*predTable$percentChildrenInPov)
 names(explanatory) <- c('community', 'number_of_violent_crimes_per_1000_population',
-                        'Average_School_Rating', 'Normalized_Average_SSL', 'Total_Park_Area_(km2)',
-                        'Number_of_Hospitals', 'Teen_Mom_Rate_(%)', 'Infant_Mortality_Rate_(%)',
+                        'Average_School_Rating', 'Normalized_Average_SSL', 'Total_Park_Area_(m2)',
+                        'Number_of_Hospitals', 'Number_of_Teen_Moms_/_1000_Female_Teenagers', 'Number_of_Infant_Mortality_/_1000_Live_Births',
                         'Percent_of_Hispanic_(%)', 'Percent_of_Black_(%)', 'Percent_of_White_(%)',
                         'Percent_of_Asian_(%)', 'Percent_of_Other_Race_(%)', 'Percent_of_Children_in_Poverty_(%)')
 
@@ -42,7 +42,7 @@ plot(explanatory[,15], explanatory$number_of_violent_crimes_per_1000_population,
      xlab=gsub('_', ' ', col_names[15]), ylab='Number of Violent Crimes / 1000 Population', pch=18)
 axis(1, at=1:2, labels=c('FALSE', 'TRUE'))
 
-# corrolation
+# correlation
 # park hospital teen_mom_rate infant_mortality races(4) poverty_children
 
 # histograms
@@ -70,3 +70,19 @@ for(i in 3:14) {
           main=paste(gsub( '\\s*\\([^\\)]+\\)', '', gsub('_', ' ', col_names[i])), '(Box Plot)'),
           xlab=gsub('_', ' ', col_names[i]))
 }
+
+# replot park area with supercript
+plot(explanatory$`Total_Park_Area_(m2)`, explanatory$number_of_violent_crimes_per_1000_population,
+     main='Violent Crime Rate V.S. Total Park Area',
+     xlab=expression('Total Park Area' ~ (m^{2})), ylab='Number of Violent Crimes / 1000 Population', pch=18)
+
+hist(explanatory$`Total_Park_Area_(m2)`,
+     col='grey',
+     main='Total Park Area (Histogram)',
+     xlab=expression('Total Park Area' ~ (m^{2})), ylab='Number of Communities')
+
+boxplot(explanatory$`Total_Park_Area_(m2)`, data=explanatory,
+        col='grey',
+        main='Total Park Area (Box Plot)',
+        xlab=expression('Total Park Area' ~ (m^{2})))
+
