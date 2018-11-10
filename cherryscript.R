@@ -8,8 +8,8 @@ library(sf)
 library(tidyverse)
 library(raster)
 
-chicagoparks <- readOGR('4A/MSCI 446/R/chicagoparksshapefile2', 'geo_export_287c1e81-adfc-4076-bbd4-7ac4b1ca62c2')
-chicagocommunityareas <- readOGR('4A/MSCI 446/R/communityareashapefile', 'geo_export_f2c553e7-eb62-4773-9655-8037a1bdd109', stringsAsFactors = FALSE)
+chicagoparks <- readOGR('4A/MSCI 446/R/dataToPreprocess/chicagoparksshapefile', 'geo_export_287c1e81-adfc-4076-bbd4-7ac4b1ca62c2')
+chicagocommunityareas <- readOGR('4A/MSCI 446/R/dataToPreprocess/communityareashapefile', 'geo_export_f2c553e7-eb62-4773-9655-8037a1bdd109', stringsAsFactors = FALSE)
 
 #TEST TO SEE HOW TO ACTUALLY GET INTERSECTION AND AREA OF INTERSECTION
 horanpark <- chicagoparks[which(chicagoparks@data$park=="HORAN (ALBERT)"),]
@@ -31,7 +31,7 @@ for(i in 1:nrow(chicagocommunityareas)) {
 }
 #print the dataframe consisting of three columns: commArea, commAreaNum, and totalParkArea
 library(readxl)
-censusdata <- read_excel("4A/MSCI 446/R/Census-Data-by-Chicago-Community-Area-2017 (2).xlsx")
+censusdata <- read_excel("4A/MSCI 446/R/dataToPreprocess/Census-Data-by-Chicago-Community-Area-2017 (2).xlsx")
 censusdata <- data.frame(censusdata$Community, censusdata$CommunityAreaNumber)
 names(censusdata) <- c('Community', 'communityAreaNumber')
 censusdata$Community <- toupper(censusdata$Community)
@@ -55,7 +55,7 @@ write.csv(totalParkAreaDF, 'totalParkAreaByCommunityArea.csv')
 ##########################################
 #did most of the conversion in excel, and using R to just create a csv of it.
 library(readxl)
-censusdata <- read_excel("4A/MSCI 446/R/Census-Data-by-Chicago-Community-Area-2017 (2).xlsx")
+censusdata <- read_excel("4A/MSCI 446/R/dataToPreprocess/Census-Data-by-Chicago-Community-Area-2017 (2).xlsx")
 censusdata <- data.frame(censusdata$Community, 
                          censusdata$CommunityAreaNumber, 
                          censusdata$Hispanic, 
@@ -78,7 +78,7 @@ library(tidyverse)
 library(raster)
 
 #Code for numHospitalsPerCommunityArea#################################
-hospitals <- readOGR('4A/MSCI 446/R/Hospitals', 'Hospitals', stringsAsFactors = FALSE)
+hospitals <- readOGR('4A/MSCI 446/R/dataToPreprocess/Hospitals', 'Hospitals', stringsAsFactors = FALSE)
 numHospitalsPerCommunityArea <- as.data.frame(table(hospitals@data$AREA_NUMBE))
 names(numHospitalsPerCommunityArea) <- c('communityAreaNum', 'numHospitals')
 numHospitalsPerCommunityArea$communityAreaNum <- as.numeric(levels(numHospitalsPerCommunityArea$communityAreaNum))
@@ -94,7 +94,7 @@ var(numHospitalsPerCommunityArea$numHospitals)
 remove(hospitals, newDF)
 
 #Code for teenMomRatePerCommunityArea#################################
-teenMomsData <- read.csv('4A/MSCI 446/R/Public_Health_Statistics_-_Births_to_mothers_aged_15-19_years_old_in_Chicago__by_year__1999-2009.csv')
+teenMomsData <- read.csv('4A/MSCI 446/R/dataToPreprocess/Public_Health_Statistics_-_Births_to_mothers_aged_15-19_years_old_in_Chicago__by_year__1999-2009.csv')
 
 #community 32 and 9 have NA values... do median imputation for these NA values
 teenBirthRates <- data.frame(teenMomsData$Teen.Birth.Rate.1999,
@@ -124,7 +124,7 @@ names(teenMomRatePerCommunityArea) <- c('communityAreaNum', 'teenMomRate')
 remove(teenBirthRates, teenBirthRatesTransposed, teenMomRatePerCommunityAreaVec, teenMomsData)
 
 #Code for infantMortalityRatePerCommunityArea#################################
-infantMortalityData <- read.csv('4A/MSCI 446/R/Public_Health_Statistics-_Infant_mortality_in_Chicago__2005__2009.csv')
+infantMortalityData <- read.csv('4A/MSCI 446/R/dataToPreprocess/Public_Health_Statistics-_Infant_mortality_in_Chicago__2005__2009.csv')
 infantMortalityData <- infantMortalityData[1:nrow(infantMortalityData)-1,]
 infantMortalityRatePerCommunityArea <- data.frame(infantMortalityData$ï..Community.Area, infantMortalityData$Average.Infant.Mortality.Rate.2005...2009)
 names(infantMortalityRatePerCommunityArea) <- c('communityAreaNum', 'infantMortalityRate')
@@ -187,3 +187,4 @@ names(predTable) <- c(
 #write to csv
 write.csv(predTable, 'predTable.csv')
 remove(avgSchoolRating, avgSSLscore, censusData, typesOfCrimes, predictedVarDF, totalParkArea, publicHealth)
+
