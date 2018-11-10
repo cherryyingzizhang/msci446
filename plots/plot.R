@@ -39,8 +39,8 @@ for(i in 3:14) {
 
 plot(explanatory[,15], explanatory$number_of_violent_crimes_per_1000_population,
      main=paste('Violent Crime Rate V.S. ', gsub( '\\s*\\([^\\)]+\\)', '', gsub('_', ' ', col_names[15]))),
-     xlab=gsub('_', ' ', col_names[15]), ylab='Number of Violent Crimes / 1000 Population', pch=18)
-axis(1, at=1:2, labels=c('FALSE', 'TRUE'))
+     xaxt='n', xlim=c(-1,2), xlab=gsub('_', ' ', col_names[15]), ylab='Number of Violent Crimes / 1000 Population', pch=18)
+axis(1, at=0:1, labels=c('FALSE', 'TRUE'))
 
 # correlation
 # park hospital teen_mom_rate infant_mortality races(4) poverty_children
@@ -86,3 +86,25 @@ boxplot(explanatory$`Total_Park_Area_(m2)`, data=explanatory,
         main='Total Park Area (Box Plot)',
         xlab=expression('Total Park Area' ~ (m^{2})))
 
+
+# Clustering
+library(cluster)
+library(fpc)
+
+n = 4
+euclidean <- matrix(, nrow = 12, ncol = 12)
+
+for(i in 3:14) {
+  for(j in 3:14) {
+    if (i != j) {
+      subexp <- data.frame(explanatory[,i],
+                           explanatory[,j])
+      cl <- kmeans(subexp, n)
+      plot(subexp, col = cl$cluster, method="euclidean",
+           main=paste(gsub( '\\s*\\([^\\)]+\\)', '', gsub('_', ' ', col_names[i])), 'V.S.', gsub( '\\s*\\([^\\)]+\\)', '', gsub('_', ' ', col_names[j]))),
+           xlab=gsub('_', ' ', col_names[i]), ylab=gsub('_', ' ', col_names[j]))
+      points(cl$centers, col = 1:n, pch = 8, cex = 2)
+      euclidean[i-2, j-2] <- sum(cl$withinss)/77
+    }
+  }
+}
