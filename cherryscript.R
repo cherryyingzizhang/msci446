@@ -8,7 +8,7 @@ library(sf)
 library(tidyverse)
 library(raster)
 
-chicagoparks <- readOGR('4A/MSCI 446/R/dataToPreprocess/chicagoparksshapefile2', 'geo_export_287c1e81-adfc-4076-bbd4-7ac4b1ca62c2')
+chicagoparks <- readOGR('4A/MSCI 446/R/dataToPreprocess/chicagoparksshapefile', 'geo_export_287c1e81-adfc-4076-bbd4-7ac4b1ca62c2')
 chicagocommunityareas <- readOGR('4A/MSCI 446/R/dataToPreprocess/communityareashapefile', 'geo_export_f2c553e7-eb62-4773-9655-8037a1bdd109', stringsAsFactors = FALSE)
 
 #TEST TO SEE HOW TO ACTUALLY GET INTERSECTION AND AREA OF INTERSECTION
