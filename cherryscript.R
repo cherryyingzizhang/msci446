@@ -115,8 +115,7 @@ colnames(teenBirthRatesTransposed) = seq(1:77)
 #find the mean teenMomBirthRate for years 1999-2009. Use this as each community area's "teenMomBirthRate"
 teenMomRatePerCommunityAreaVec=c()
 for(i in 1:ncol(teenBirthRatesTransposed)){
-  teenBirthRatesTransposed[is.na(teenBirthRatesTransposed[,i]), i] <- median(teenBirthRatesTransposed[,i], na.rm = TRUE)
-  teenMomRatePerCommunityAreaVec[i] = mean(teenBirthRatesTransposed[,i])
+  teenMomRatePerCommunityAreaVec[i] = mean(teenBirthRatesTransposed[,i], na.rm = FALSE)
 }
 
 teenMomRatePerCommunityArea <- data.frame(teenMomsData[1:nrow(teenMomsData)-1,1], teenMomRatePerCommunityAreaVec)

@@ -37,6 +37,11 @@ modelLM <- train(
 plot(modelLM$finalModel$fitted.values, dataForPred[,1], main='Predicted vs Actual for Simple Linear Regression', xlab='Predicted', ylab='Actual')
 plot(modelLM$finalModel$fitted.values, modelLM$finalModel$residuals, main='Residual Plot for Simple Linear Regression', xlab='Predicted', ylab='Residuals')
 abline(h = 0, col = "darkgrey", lty = 2)
+hist(modelLM$finalModel$residuals, 
+     col='grey',
+     main='Residual Histogram for Simple Linear Regression',
+     xlab='Residual', ylab='Frequency')
+
 summary(modelLM)
 
 lmPredValues <- data.frame("predicted" = rep(0, nrow(dataForPred)))
@@ -45,6 +50,7 @@ for(i in 1:k) {
   model <- lm(percentViolentCrimePer1000Population ~ ., data = dataForPred[split$train,])
   lmPredValues$predicted[split$app] <- predict(model, newdata = dataForPred[split$app,])
 }
+
 metricsDF[1,] <- c("Linear Regression CV", postResample(lmPredValues$predicted, dataForPred[,1]))
 metricsDF[4,] <- c("Linear Regression", postResample(predict(modelLM, dataForPred[2:13]), dataForPred[,1]))
 
@@ -70,7 +76,7 @@ modelGLMNET <- train(
   y = dataForPred[,1],
   method = "glmnet", 
   metric = "RMSE",
-  tuneGrid = expand.grid(alpha = 0:10/10, lambda = seq(0.0001, 1, length = 20)),
+  tuneGrid = expand.grid(alpha = 0:10/10), #lambda = seq(0.0001, 1, length = 20)
   trControl = tControlObj
 )
 predictionGLMNET <- predict(modelGLMNET, dataForPred[, 2:13])
@@ -78,6 +84,10 @@ plot(modelGLMNET,  main='Alpha and Lambda Values for GLMNET') #plots RMSE over d
 plot(predictionGLMNET, dataForPred[,1], main='Predicted vs Actual for GLMNET Regression', xlab='Predicted', ylab='Actual')
 plot(predictionGLMNET, (dataForPred[,1]-predictionGLMNET), main='Residual Plot for GLMNET Regression', xlab='Predicted', ylab='Residuals')
 abline(h = 0, col = "darkgrey", lty = 2)
+hist((dataForPred[,1]-predictionGLMNET), 
+     col='grey',
+     main='Residual Histogram for GLMNET Linear Regression',
+     xlab='Residual', ylab='Frequency')
 coef(modelGLMNET$finalModel, modelGLMNET$bestTune$lambda)
 postResample(predictionGLMNET, dataForPred[,1])
 
@@ -147,6 +157,10 @@ metricsDF[6,] <- c("GAM", postResample(finalPredictions, dataForPred[,1]))
 plot(finalPredictions, dataForPred[,1], main='Predicted vs Actual for GAM Regression', xlab='Predicted', ylab='Actual')
 plot(finalPredictions, (dataForPred[,1]-finalPredictions), main='Residual Plot for GAM Regression', xlab='Predicted', ylab='Residuals')
 abline(h = 0, col = "darkgrey", lty = 2)
+hist((dataForPred[,1]-finalPredictions), 
+     col='grey',
+     main='Residual Histogram for GAM Regression',
+     xlab='Residual', ylab='Frequency')
 postResample(predict(gamModel, dataForPred[, 2:13]), dataForPred[,1])
 
 #plot all the fitted splines
