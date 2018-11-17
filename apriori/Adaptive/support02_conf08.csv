@@ -1,0 +1,4 @@
+,antecedents,consequents,support,confidence
+0,"frozenset({'asian (-0.049,0]'})","frozenset({'black (24,97.1]'})",0.23076923076923078,0.9000000000000001
+1,"frozenset({'hispanic (0.915,4]'})","frozenset({'black (24,97.1]'})",0.20512820512820512,0.9411764705882353
+2,"frozenset({'white (-0.084,5]'})","frozenset({'black (24,97.1]'})",0.20512820512820512,0.9411764705882353
