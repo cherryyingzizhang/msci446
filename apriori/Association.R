@@ -1,13 +1,13 @@
 library(OneR)
+
+# optimal number of bins:
+# https://stats.stackexchange.com/questions/798/calculating-optimal-number-of-bins-in-a-histogram
 col_names <- colnames(explanatory)
 for(i in 2:14) {
   sorted <- sort(explanatory[, i])
   hist(sorted, breaks="FD", xlab=col_names[i])
-  # plot(sorted, xlab=col_names[i], pch=18)
 }
-
-# optimal number of bins:
-# https://stats.stackexchange.com/questions/798/calculating-optimal-number-of-bins-in-a-histogram
+# number bins obtained from histogram
 num_bins <- c(6,6,8,12,8,6,12,5,2,5,10,10,8)
 strs <- c('crimes', 'school', 'SSL', 'park', 'hospital', 'teenMoms', 'infactMortality', 'hispanic', 'black', 'white', 'asian', 'other', 'childPoverty')
 

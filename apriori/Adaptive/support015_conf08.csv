@@ -1,20 +1,20 @@
 ,antecedents,consequents,support,confidence
-0,"frozenset({'asian (-0.049,0]'})","frozenset({'black (24,97.1]'})",0.23076923076923078,0.9000000000000001
-1,"frozenset({'white (-0.084,5]'})","frozenset({'asian (-0.049,0]'})",0.1794871794871795,0.8235294117647058
-2,"frozenset({'crimes (105,313]'})","frozenset({'black (-0.097,24]'})",0.15384615384615385,0.9230769230769231
-3,"frozenset({'crimes (451,548]'})","frozenset({'black (-0.097,24]'})",0.15384615384615385,0.9230769230769231
-4,"frozenset({'hispanic (53.8,86.1]'})","frozenset({'black (-0.097,24]'})",0.19230769230769232,0.9375000000000001
-5,frozenset({'other 3'}),"frozenset({'black (-0.097,24]'})",0.15384615384615385,0.8571428571428572
-6,"frozenset({'white (50.8,84.1]'})","frozenset({'black (-0.097,24]'})",0.19230769230769232,0.9375000000000001
-7,"frozenset({'crimes (1.02e+03,1.56e+03]'})","frozenset({'black (24,97.1]'})",0.15384615384615385,0.9230769230769231
-8,"frozenset({'crimes (1.56e+03,2.76e+03]'})","frozenset({'black (24,97.1]'})",0.16666666666666666,1.0
-9,"frozenset({'hispanic (0.915,4]'})","frozenset({'black (24,97.1]'})",0.20512820512820512,0.9411764705882353
-10,"frozenset({'white (-0.084,5]'})","frozenset({'black (24,97.1]'})",0.20512820512820512,0.9411764705882353
-11,"frozenset({'hispanic (53.8,86.1]'})",frozenset({'hospital 0'}),0.1794871794871795,0.875
-12,"frozenset({'white (13,30.6]'})",frozenset({'hospital 0'}),0.16666666666666666,1.0
-13,"frozenset({'hospital 0', 'asian (-0.049,0]'})","frozenset({'black (24,97.1]'})",0.16666666666666666,0.8666666666666666
-14,"frozenset({'white (-0.084,5]', 'asian (-0.049,0]'})","frozenset({'black (24,97.1]'})",0.16666666666666666,0.9285714285714285
-15,"frozenset({'white (-0.084,5]', 'black (24,97.1]'})","frozenset({'asian (-0.049,0]'})",0.16666666666666666,0.8125
-16,"frozenset({'hospital 0', 'hispanic (53.8,86.1]'})","frozenset({'black (-0.097,24]'})",0.1794871794871795,1.0
-17,"frozenset({'black (-0.097,24]', 'hispanic (53.8,86.1]'})",frozenset({'hospital 0'}),0.1794871794871795,0.9333333333333332
-18,"frozenset({'hispanic (53.8,86.1]'})","frozenset({'hospital 0', 'black (-0.097,24]'})",0.1794871794871795,0.875
+0,,,,
+1,"frozenset({'white (-0.084,5]'})","frozenset({'asian (-0.049,0]'})",0.179487179,0.823529412
+2,"frozenset({'crimes (105,313]'})","frozenset({'black (-0.097,24]'})",0.153846154,0.923076923
+3,"frozenset({'crimes (451,548]'})","frozenset({'black (-0.097,24]'})",0.153846154,0.923076923
+4,,,,
+5,frozenset({'other 3'}),"frozenset({'black (-0.097,24]'})",0.153846154,0.857142857
+6,,,,
+7,"frozenset({'crimes (1.02e+03,1.56e+03]'})","frozenset({'black (24,97.1]'})",0.153846154,0.923076923
+8,"frozenset({'crimes (1.56e+03,2.76e+03]'})","frozenset({'black (24,97.1]'})",0.166666667,1
+9,,,,
+10,,,,
+11,"frozenset({'hispanic (53.8,86.1]'})",frozenset({'hospital 0'}),0.179487179,0.875
+12,"frozenset({'white (13,30.6]'})",frozenset({'hospital 0'}),0.166666667,1
+13,"frozenset({'hospital 0', 'asian (-0.049,0]'})","frozenset({'black (24,97.1]'})",0.166666667,0.866666667
+14,"frozenset({'white (-0.084,5]', 'asian (-0.049,0]'})","frozenset({'black (24,97.1]'})",0.166666667,0.928571429
+15,"frozenset({'white (-0.084,5]', 'black (24,97.1]'})","frozenset({'asian (-0.049,0]'})",0.166666667,0.8125
+16,"frozenset({'hospital 0', 'hispanic (53.8,86.1]'})","frozenset({'black (-0.097,24]'})",0.179487179,1
+17,"frozenset({'black (-0.097,24]', 'hispanic (53.8,86.1]'})",frozenset({'hospital 0'}),0.179487179,0.933333333
+18,"frozenset({'hispanic (53.8,86.1]'})","frozenset({'hospital 0', 'black (-0.097,24]'})",0.179487179,0.875
