@@ -3,14 +3,16 @@
 ##########################################
 library(caret)
 library(dplyr)
+library(vtreat)
+library(glmnet)
 
 #Import data: includes explanatory variables AND class variable but also other columns (e.g. community area name)
 data <- read.csv("4A/MSCI 446/R/explanatoryvariables/predTable.csv")
 #remove extraneous columns (e.g. community area name)
 dataForPred <- dplyr::select(data, -X, -community, -communityAreaNum)
 dataForPred <- dataForPred[,1:13]
-#dataForPred$numHospitals <- ifelse(dataForPred$numHospitals >= 3, 1, 0)
-#colnames(dataForPred)[5] <- "has3OrMoreHospitals"
+dataForPred$numHospitals <- ifelse(dataForPred$numHospitals >= 3, 1, 0)
+colnames(dataForPred)[5] <- "has3OrMoreHospitals"
 
 #Use 10-fold cross-validation for getting alpha/lambda values for glmnet
 tControlObj <- caret::trainControl(
@@ -19,8 +21,8 @@ tControlObj <- caret::trainControl(
   summaryFunction = defaultSummary
 )
 
-k <- 77
-#10 fold cross validation for getting performance metrics (RMSE, Rsquared, etc.)
+k <- 10
+#cross validation for getting performance metrics (RMSE, Rsquared, etc.)
 splitPlan <- kWayCrossValidation(nrow(dataForPred), k, NULL, NULL)
 
 metricsDF <- as.data.frame(matrix(nrow = 3, ncol = 4))
@@ -53,6 +55,7 @@ for(i in 1:k) {
 
 metricsDF[1,] <- c("Linear Regression CV", postResample(lmPredValues$predicted, dataForPred[,1]))
 metricsDF[4,] <- c("Linear Regression", postResample(predict(modelLM, dataForPred[2:13]), dataForPred[,1]))
+modelLM$finalModel$coefficients
 
 ##########################################
 #train using linear regression and preprocessing steps#####################
@@ -70,13 +73,49 @@ abline(h = 0, col = "darkgrey", lty = 2)
 summary(modelLMPreProc)
 
 ##########################################
+#train using glmnet WITHOUT CARET#
+hyperParameterCVSet <- sample(1:77,size=20,replace=FALSE) 
+a <- seq(0.0, 1, 0.05)
+search <- foreach(i = a, .combine = rbind) %dopar% {
+  cv <- cv.glmnet(as.matrix(dataForPred[,2:13]), dataForPred[,1], nfold = 10, parallel = TRUE, alpha = i)
+  data.frame(cvm = cv$cvm[cv$lambda == cv$lambda.1se], lambda.1se = cv$lambda.1se, alpha = i)
+}
+cv3 <- search[search$cvm == min(search$cvm), ]
+cv3
+
+modelGLMNET <- glmnet(as.matrix(dataForPred[,2:13]), dataForPred[,1], lambda = cv3$lambda.1se, alpha = cv3$alpha)
+coef(modelGLMNET)
+predictionGLMNET <- predict(modelGLMNET, s = cv3$lambda.1se, newx = as.matrix(dataForPred[,2:13]))
+
+
+plot(modelGLMNET,  main='Alpha and Lambda Values for GLMNET') #plots RMSE over different alpha and lambda values. colors = alpha, each dot is each lambda.
+plot(predictionGLMNET, dataForPred[,1], main='Predicted vs Actual for GLMNET Regression', xlab='Predicted', ylab='Actual')
+plot(predictionGLMNET, (dataForPred[,1]-predictionGLMNET), main='Residual Plot for GLMNET Regression', xlab='Predicted', ylab='Residuals')
+abline(h = 0, col = "darkgrey", lty = 2)
+hist((dataForPred[,1]-predictionGLMNET), 
+     col='grey',
+     main='Residual Histogram for GLMNET Linear Regression',
+     xlab='Residual', ylab='Frequency')
+postResample(predictionGLMNET, dataForPred[,1])
+
+
+glmnetPredValues <- data.frame("predicted" = rep(0, nrow(dataForPred)))
+for(i in 1:k) {
+  split <- splitPlan[[i]]
+  model <- glmnet(as.matrix(dataForPred[split$train,2:13]), dataForPred[split$train,1], alpha = cv3$alpha, lambda = cv3$lambda.1se)
+  glmnetPredValues$predicted[split$app] <- predict(model, s = cv3$lambda.1se, newx = as.matrix(dataForPred[split$app,2:13]))
+}
+metricsDF[7,] <- c("Elastic Net nocaret CV", postResample(glmnetPredValues$predicted, dataForPred[,1]))
+metricsDF[8,] <- c("Elastic Net nocaret", postResample(predictionGLMNET, dataForPred[,1]))
+##########################################
+
 #train using glmnet#
 modelGLMNET <- train(
   x = dataForPred[,2:13], 
   y = dataForPred[,1],
   method = "glmnet", 
   metric = "RMSE",
-  tuneGrid = expand.grid(alpha = 0:10/10), #lambda = seq(0.0001, 1, length = 20)
+  tuneGrid = expand.grid(alpha = 0:10/10, lambda = seq(0.0001, 1, length = 20)), #lambda = seq(0.0001, 1, length = 20)
   trControl = tControlObj
 )
 predictionGLMNET <- predict(modelGLMNET, dataForPred[, 2:13])
