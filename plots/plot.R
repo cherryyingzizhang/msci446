@@ -149,8 +149,8 @@ cluster_set <- data.frame(normalized$`Number_of_Teen_Moms_/_1000_Female_Teenager
 names(cluster_set) <- c('TeenMom', 'InfantMortality', 'ChildPoverty', 'Hispanic', 'Black', 'Asian', 'White')
 
 x=5
-y=6
-z=7
+y=1
+z=3
 
 cl3 <- kmeans(cluster_set[, c(x,y,z)], 3, nstart=50)
 cluster_set$cl <- as.factor(cl3$cluster)
