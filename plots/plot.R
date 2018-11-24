@@ -17,12 +17,13 @@ explanatory <- data.frame(predTable$communityAreaNum,
                           100*predTable$white,
                           100*predTable$asian,
                           100*predTable$other,
-                          100*predTable$percentChildrenInPov)
+                          100*predTable$percentChildrenInPov,
+                          census_data_by_community_area$Community)
 names(explanatory) <- c('community', 'number_of_violent_crimes_per_1000_population',
                         'Average_School_Rating', 'Normalized_Average_SSL', 'Total_Park_Area_(m2)',
                         'Number_of_Hospitals', 'Number_of_Teen_Moms_/_1000_Female_Teenagers', 'Number_of_Infant_Mortality_/_1000_Live_Births',
                         'Percent_of_Hispanic_(%)', 'Percent_of_Black_(%)', 'Percent_of_White_(%)',
-                        'Percent_of_Asian_(%)', 'Percent_of_Other_Race_(%)', 'Percent_of_Children_in_Poverty_(%)')
+                        'Percent_of_Asian_(%)', 'Percent_of_Other_Race_(%)', 'Percent_of_Children_in_Poverty_(%)','Community_Name')
 
 # normalize SSL (266.0711 - 304.1068)
 explanatory$Normalized_Average_SSL <- (explanatory$Normalized_Average_SSL-min(explanatory$Normalized_Average_SSL))/(max(explanatory$Normalized_Average_SSL) - min(explanatory$Normalized_Average_SSL))
@@ -145,24 +146,31 @@ cluster_set <- data.frame(normalized$`Number_of_Teen_Moms_/_1000_Female_Teenager
                           normalized$`Percent_of_Hispanic_(%)`,
                           normalized$`Percent_of_Black_(%)`,
                           normalized$`Percent_of_Asian_(%)`,
-                          normalized$`Percent_of_White_(%)`)
-names(cluster_set) <- c('TeenMom', 'InfantMortality', 'ChildPoverty', 'Hispanic', 'Black', 'Asian', 'White')
+                          normalized$`Percent_of_White_(%)`,
+                          census_data_by_community_area$communityAreaNumber,
+                          census_data_by_community_area$Community)
+names(cluster_set) <- c('TeenMom', 'InfantMortality', 'ChildPoverty', 'Hispanic', 'Black', 'Asian', 'White', 'Number', 'CommunityName')
 
-x=4
-y=2
-z=1
+x=5
+y=6
+z=7
+
+x_string = 'Teen Mom'
+y_string = 'Child Poverty Rate'
+z_string = 'Infant Mortality Rate'
 
 cl3 <- kmeans(cluster_set[, c(x,y,z)], 3, nstart=50)
 cluster_set$cl <- as.factor(cl3$cluster)
 cluster3d <- plot_ly(cluster_set, x = cluster_set[, x],
                      y = cluster_set[, y],
                      z = cluster_set[, z],
+                     text = ~paste(Number, CommunityName),
                      color = ~cl, colors = c('#A9BCD0','#58A4B0','#DAA49A')) %>%
   add_markers() %>%
-  layout(title = paste('Child Poverty Rate VS Percent of Black People VS Infant Mortality Rate'),
-         scene = list(xaxis = list(title = 'Percent of Black People'),
-                      yaxis = list(title = 'Child Poverty Rate'),
-                      zaxis = list(title = 'Infant Mortality Rate')))
+  layout(title = paste('Percent of Asian, White, & Black People'),
+         scene = list(xaxis = list(title = 'Percent Black People'),
+                      yaxis = list(title = 'Percent Asian People'),
+                      zaxis = list(title = 'Percent White People')))
 cluster3d
 
 # cl3 <- kmeans(cluster_set[, c(x,y,z)], 3, nstart=50)
@@ -177,3 +185,42 @@ cluster3d
 #                       yaxis = list(title = colnames(cluster_set)[y]),
 #                       zaxis = list(title = colnames(cluster_set)[z])))
 # cluster3d
+
+# extra 2D scatter plot
+
+p <- plot_ly(data = explanatory, x = explanatory$Average_School_Rating,
+             y = ~number_of_violent_crimes_per_1000_population,
+             text = ~paste(community, Community_Name),
+             marker = list(size = 10,
+                           color = '#DAA49A',
+                           line = list(color = '#98726B',
+                                       width = 2))) %>%
+  layout(title = paste('Violent Crime Rate V.S. Average School Rating'),
+         xaxis = list(title = 'Average School Rating'),
+         yaxis = list(title = 'Violent Crimes per 1000 Population'))
+
+# 3D plot color based on crime rate
+
+x=5
+y=6
+z=7
+
+x_string = 'Teen Mom'
+y_string = 'Child Poverty Rate'
+z_string = 'Infant Mortality Rate'
+
+cl3 <- kmeans(cluster_set[, c(x,y,z)], 3, nstart=50)
+cluster_set$cl <- as.factor(cl3$cluster)
+cluster3d <- plot_ly(cluster_set, x = cluster_set[, x],
+                     y = cluster_set[, y],
+                     z = cluster_set[, z],
+                     text = ~paste(Number, CommunityName),
+                     color = ~cl, colors = c('#A9BCD0','#58A4B0','#DAA49A')) %>%
+  add_markers() %>%
+  layout(title = paste('Percent of Asian, White, & Black People'),
+         scene = list(xaxis = list(title = 'Percent Black People'),
+                      yaxis = list(title = 'Percent Asian People'),
+                      zaxis = list(title = 'Percent White People')))
+cluster3d
+
+
