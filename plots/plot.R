@@ -148,9 +148,9 @@ cluster_set <- data.frame(normalized$`Number_of_Teen_Moms_/_1000_Female_Teenager
                           normalized$`Percent_of_White_(%)`)
 names(cluster_set) <- c('TeenMom', 'InfantMortality', 'ChildPoverty', 'Hispanic', 'Black', 'Asian', 'White')
 
-x=5
-y=1
-z=3
+x=4
+y=2
+z=1
 
 cl3 <- kmeans(cluster_set[, c(x,y,z)], 3, nstart=50)
 cluster_set$cl <- as.factor(cl3$cluster)
@@ -159,8 +159,21 @@ cluster3d <- plot_ly(cluster_set, x = cluster_set[, x],
                      z = cluster_set[, z],
                      color = ~cl, colors = c('#A9BCD0','#58A4B0','#DAA49A')) %>%
   add_markers() %>%
-  layout(title = paste(colnames(cluster_set)[x],"VS",colnames(cluster_set)[y],"VS",colnames(cluster_set)[z]),
-         scene = list(xaxis = list(title = colnames(cluster_set)[x]),
-                      yaxis = list(title = colnames(cluster_set)[y]),
-                      zaxis = list(title = colnames(cluster_set)[z])))
+  layout(title = paste('Child Poverty Rate VS Percent of Black People VS Infant Mortality Rate'),
+         scene = list(xaxis = list(title = 'Percent of Black People'),
+                      yaxis = list(title = 'Child Poverty Rate'),
+                      zaxis = list(title = 'Infant Mortality Rate')))
 cluster3d
+
+# cl3 <- kmeans(cluster_set[, c(x,y,z)], 3, nstart=50)
+# cluster_set$cl <- as.factor(cl3$cluster)
+# cluster3d <- plot_ly(cluster_set, x = cluster_set[, x],
+#                      y = cluster_set[, y],
+#                      z = cluster_set[, z],
+#                      color = ~cl, colors = c('#A9BCD0','#58A4B0','#DAA49A')) %>%
+#   add_markers() %>%
+#   layout(title = paste(colnames(cluster_set)[x],"VS",colnames(cluster_set)[y],"VS",colnames(cluster_set)[z]),
+#          scene = list(xaxis = list(title = colnames(cluster_set)[x]),
+#                       yaxis = list(title = colnames(cluster_set)[y]),
+#                       zaxis = list(title = colnames(cluster_set)[z])))
+# cluster3d
