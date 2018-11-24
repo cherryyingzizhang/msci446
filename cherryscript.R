@@ -17,6 +17,10 @@ eastgarfield <- chicagocommunityareas[which(chicagocommunityareas@data$community
 Intersects <- raster::intersect(horanpark, eastgarfield)
 area(Intersects)
 
+plot(chicagocommunityareas)
+invisible(text(getSpPPolygonsLabptSlots(chicagocommunityareas), labels=as.character(chicagocommunityareas$community), cex=0.4))
+
+
 #RUN THIS CODE FOR TOTAL PARK AREA FOR EACH COMMUNITY AREA#################################
 totalParkAreaForCommunityAreas <- rep(0, nrow(chicagocommunityareas))
 for(i in 1:nrow(chicagocommunityareas)) {
