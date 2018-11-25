@@ -14,22 +14,22 @@ output:
       ratio: '16:9'
 ---
 class: full-width, full-height
-background-image: url(http://cherryzhang.net/MSCI446/title.png)
+background-image: url(title.png)
 ---
 class: full-width, full-height
-background-image: url(http://cherryzhang.net/MSCI446/background.png)
+background-image: url(background.png)
 ---
 class: full-width, full-height
-background-image: url(http://cherryzhang.net/MSCI446/hypothesis.png)
+background-image: url(hypothesis.png)
 ---
 <iframe frameBorder="0" src="https://www.google.com/maps/d/u/0/embed?mid=1O-3Uot4mSetKW-M_govahruUjDc&ll=41.835929258325436%2C-87.731988&z=10"></iframe>
 ---
 class: full-width, full-height
-background-image: url(http://cherryzhang.net/MSCI446/chicagodatasite.PNG)
+background-image: url(chicagodatasite.PNG)
 ---
 
 class: full-width, full-height
-background-image: url(http://cherryzhang.net/MSCI446/classvariable.PNG)
+background-image: url(classvariable.PNG)
 
 <!-- ```R -->
 <!-- violentCrimeForCommunityArea <- rowSums(allCrimeForCommunityArea[,  -->
@@ -43,25 +43,36 @@ background-image: url(http://cherryzhang.net/MSCI446/classvariable.PNG)
 ```
 ---
 class: full-width, full-height
-background-image: url(http://cherryzhang.net/MSCI446/predictors.PNG)
+background-image: url(predictors.PNG)
 ---
 class: full-width, full-height
-background-image: url(http://cherryzhang.net/MSCI446/samplerowsclass.PNG)
+background-image: url(results.PNG)
 ---
 class: full-width, full-height
-background-image: url(http://cherryzhang.net/MSCI446/samplerowspredictors.PNG)
+![Title](edatitle.PNG)
+<div class='parent flex-parent'>
+  <div class='child flex-child' ><embed src="crime_teen.html"></div>
+  <div class='child flex-child'><embed src="crime_poverty.html"></div>
+</div>
 ---
 class: full-width, full-height
-background-image: url(http://cherryzhang.net/MSCI446/results.PNG)
+![Title](edatitle.PNG)
+<div class='parent flex-parent'>
+  <div class='child flex-child' ><embed src="crime_park.html"></div>
+  <div class='child flex-child'><embed src="crime_school.html"></div>
+</div>
 ---
 class: full-width, full-height
-background-image: url(http://cherryzhang.net/MSCI446/eda1.PNG)
+![Title](regressiontitle.PNG)
+<div class='parent flex-parent-regression'>
+  <div class='child flex-child-regression' ><embed src="regressionPredictedVsActual.html"></div>
+  <div class='child flex-child-regression' ><embed src="regressionResidual.html"></div>
+  <div class='child flex-child-regression'><embed src="regressionHistogram.html"></div>
+</div>
+---
+<iframe frameBorder="0" src="teen_poverty_infant.html"></iframe>
+---
+<iframe frameBorder="0" src="crime_teen_poverty_infant.html"></iframe>
 ---
 class: full-width, full-height
-background-image: url(http://cherryzhang.net/MSCI446/eda2.PNG)
----
-class: full-width, full-height
-background-image: url(http://cherryzhang.net/MSCI446/regression.PNG)
----
-<iframe frameBorder="0" src="http://cherryzhang.net/MSCI446/black_infant_poverty.html"></iframe>
----
+background-image: url(conclusion.PNG)

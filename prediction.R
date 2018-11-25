@@ -7,12 +7,12 @@ library(vtreat)
 library(glmnet)
 
 #Import data: includes explanatory variables AND class variable but also other columns (e.g. community area name)
-data <- read.csv("4A/MSCI 446/R/explanatoryvariables/predTable.csv")
+data <- read.csv("explanatoryvariables/predTable.csv")
 #remove extraneous columns (e.g. community area name)
 dataForPred <- dplyr::select(data, -X, -community, -communityAreaNum)
 dataForPred <- dataForPred[,1:13]
-dataForPred$numHospitals <- ifelse(dataForPred$numHospitals >= 3, 1, 0)
-colnames(dataForPred)[5] <- "has3OrMoreHospitals"
+#dataForPred$numHospitals <- ifelse(dataForPred$numHospitals >= 3, 1, 0)
+#colnames(dataForPred)[5] <- "has3OrMoreHospitals"
 
 #Use 10-fold cross-validation for getting alpha/lambda values for glmnet
 tControlObj <- caret::trainControl(
@@ -57,6 +57,48 @@ metricsDF[1,] <- c("Linear Regression CV", postResample(lmPredValues$predicted, 
 metricsDF[4,] <- c("Linear Regression", postResample(predict(modelLM, dataForPred[2:13]), dataForPred[,1]))
 modelLM$finalModel$coefficients
 
+##########################################
+#plotly
+lmDF <- data.frame("fittedValues" = modelLM$finalModel$fitted.values, "actualValues" =  dataForPred[,1], "community" = data[,2], "communityNum" = data[,3])
+
+p <- plot_ly(data = lmDF, x = ~fittedValues,
+             y = ~actualValues,
+             text = ~paste(communityNum, community),
+             marker = list(size = 10,
+                           color = '#439F53',
+                           line = list(color = '#306F3B',
+                                       width = 2))) %>%
+  layout(title = paste('Predicted vs Actual'),
+         xaxis = list(title = 'Predicted'),
+         yaxis = list(title = 'Actual'))
+htmlwidgets::saveWidget(as_widget(p), "regressionPredictedVsActual.html")
+
+
+p <- plot_ly(data = lmDF, x = ~fittedValues,
+             y = modelLM$finalModel$residuals,
+             text = ~paste(communityNum, community),
+             marker = list(size = 10,
+                           color = '#439F53',
+                           line = list(color = '#306F3B',
+                                       width = 2)))  %>%
+  layout(title = paste('Residual Plot'),
+         xaxis = list(title = 'Predicted'),
+         yaxis = list(title = 'Residual'))
+htmlwidgets::saveWidget(as_widget(p), "regressionResidual.html")
+
+
+p <- plot_ly(x = modelLM$finalModel$residuals, type = "histogram", 
+             # xbins.start = -600,
+             # xbins.end = 800,
+             # xbins.size = 7,
+             nbinsx = 7,
+             marker = list(color = '#439F53',
+                           line = list(color = '#306F3B',
+                                       width = 2)))  %>%
+  layout(title = paste('Residual Histogram'),
+       xaxis = list(title = 'Residual'),
+       yaxis = list(title = 'Frequency'))
+  htmlwidgets::saveWidget(as_widget(p), "regressionHistogram.html")
 ##########################################
 #train using linear regression and preprocessing steps#####################
 #preprocessing includes: PCA, normalization

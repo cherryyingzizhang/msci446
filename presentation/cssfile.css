@@ -6,6 +6,23 @@
 }
 
 iframe {
-
 	margin: 0; padding: 0; height: 100%; width: 100%;
+}
+
+.flex-parent {
+  display: flex;
+  height: 60%;
+  align: bottom;
+}
+.flex-child {
+  flex: 1;
+  height: 100%;
+}
+
+embed {
+	margin: 0; padding: 0; height: 100%; width: 100%;
+}
+
+img {
+	max-width: 100%
 }
