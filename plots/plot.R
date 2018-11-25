@@ -50,13 +50,13 @@ axis(1, at=0:1, labels=c('FALSE', 'TRUE'))
 # park hospital teen_mom_rate infant_mortality races(4) poverty_children
 
 # histograms
-hist(explanatory$number_of_violent_crimes_per_1000_population, 
+hist(explanatory$number_of_violent_crimes_per_1000_population/max(explanatory$number_of_violent_crimes_per_1000_population), 
      col='grey',
      main='Number of Violent Crimes / 1000 Population (Histogram)',
      xlab='Number of Violent Crimes / 1000 Population', ylab='Number of Communities')
 
 for(i in 3:14) {
-  hist(explanatory[,i],
+  hist(explanatory[,i]/max(explanatory[,i]),
        col='grey',
        main=paste(gsub( '\\s*\\([^\\)]+\\)', '', gsub('_', ' ', col_names[i])), '(Histogram)'),
        xlab=gsub('_', ' ', col_names[i]), ylab='Number of Communities')
@@ -148,8 +148,9 @@ cluster_set <- data.frame(normalized$`Number_of_Teen_Moms_/_1000_Female_Teenager
                           normalized$`Percent_of_Asian_(%)`,
                           normalized$`Percent_of_White_(%)`,
                           census_data_by_community_area$communityAreaNumber,
-                          census_data_by_community_area$Community)
-names(cluster_set) <- c('TeenMom', 'InfantMortality', 'ChildPoverty', 'Hispanic', 'Black', 'Asian', 'White', 'Number', 'CommunityName')
+                          census_data_by_community_area$Community,
+                          explanatory$number_of_violent_crimes_per_1000_population)
+names(cluster_set) <- c('TeenMom', 'InfantMortality', 'ChildPoverty', 'Hispanic', 'Black', 'Asian', 'White', 'Number', 'CommunityName', 'crime')
 
 x=5
 y=6
@@ -201,9 +202,9 @@ p <- plot_ly(data = explanatory, x = explanatory$Average_School_Rating,
 
 # 3D plot color based on crime rate
 
-x=5
-y=6
-z=7
+x=1
+y=2
+z=3
 
 x_string = 'Teen Mom'
 y_string = 'Child Poverty Rate'
@@ -215,12 +216,20 @@ cluster3d <- plot_ly(cluster_set, x = cluster_set[, x],
                      y = cluster_set[, y],
                      z = cluster_set[, z],
                      text = ~paste(Number, CommunityName),
-                     color = ~cl, colors = c('#A9BCD0','#58A4B0','#DAA49A')) %>%
+                     marker = list(color = ~crime, colorscale = c('#84A98C', '#84A98C'), showscale = TRUE)) %>%
   add_markers() %>%
-  layout(title = paste('Percent of Asian, White, & Black People'),
-         scene = list(xaxis = list(title = 'Percent Black People'),
-                      yaxis = list(title = 'Percent Asian People'),
-                      zaxis = list(title = 'Percent White People')))
+  layout(title = paste('Teen Mom, Infant Mortality, & Child Poverty Rate'),
+         scene = list(xaxis = list(title = 'Teen Mom Rate'),
+                      yaxis = list(title = 'Infant Mortality Rate'),
+                      zaxis = list(title = 'Child Poverty Rate')),
+         annotations = list(
+           x = 1.13,
+           y = 1.05,
+           text ='# Violent Crimes<br>1000 Population',
+           xref = 'paper',
+           yref = 'paper',
+           showarrow = FALSE
+         ))
 cluster3d
 
-
+# '#FFE1A1', '#683531'
