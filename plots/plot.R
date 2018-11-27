@@ -36,7 +36,7 @@ col_names <- colnames(explanatory)
 
 # plot everything
 for(i in 3:14) {
-  plot(explanatory[,i], explanatory$number_of_violent_crimes_per_1000_population,
+  plot(explanatory[,i]/max(explanatory[,i]), explanatory$number_of_violent_crimes_per_1000_population,
        main=paste('Violent Crime Rate V.S.', gsub( '\\s*\\([^\\)]+\\)', '', gsub('_', ' ', col_names[i]))),
        xlab=gsub('_', ' ', col_names[i]), ylab='Number of Violent Crimes / 1000 Population', pch=18)
 }
@@ -76,11 +76,11 @@ for(i in 3:14) {
 }
 
 # replot park area with supercript
-plot(explanatory$`Total_Park_Area_(m2)`, explanatory$number_of_violent_crimes_per_1000_population,
+plot(explanatory$`Total_Park_Area_(m2)`/max(explanatory$`Total_Park_Area_(m2)`), explanatory$number_of_violent_crimes_per_1000_population,
      main='Violent Crime Rate V.S. Total Park Area',
      xlab=expression('Total Park Area' ~ (m^{2})), ylab='Number of Violent Crimes / 1000 Population', pch=18)
 
-hist(explanatory$`Total_Park_Area_(m2)`,
+hist(explanatory$`Total_Park_Area_(m2)`/max(explanatory$`Total_Park_Area_(m2)`),
      col='grey',
      main='Total Park Area (Histogram)',
      xlab=expression('Total Park Area' ~ (m^{2})), ylab='Number of Communities')
@@ -189,8 +189,9 @@ cluster3d
 
 # extra 2D scatter plot
 
-p <- plot_ly(data = explanatory, x = explanatory$Average_School_Rating,
-             y = ~number_of_violent_crimes_per_1000_population,
+x_val = explanatory$Average_School_Rating
+p <- plot_ly(data = explanatory, x = x_val/max(x_val),
+             y = explanatory$number_of_violent_crimes_per_1000_population,
              text = ~paste(community, Community_Name),
              marker = list(size = 10,
                            color = '#DAA49A',
@@ -199,16 +200,15 @@ p <- plot_ly(data = explanatory, x = explanatory$Average_School_Rating,
   layout(title = paste('Violent Crime Rate V.S. Average School Rating'),
          xaxis = list(title = 'Average School Rating'),
          yaxis = list(title = 'Violent Crimes per 1000 Population'))
+p
+
+
 
 # 3D plot color based on crime rate
 
-x=1
-y=2
-z=3
-
-x_string = 'Teen Mom'
-y_string = 'Child Poverty Rate'
-z_string = 'Infant Mortality Rate'
+x=5
+y=4
+z=7
 
 cl3 <- kmeans(cluster_set[, c(x,y,z)], 3, nstart=50)
 cluster_set$cl <- as.factor(cl3$cluster)
@@ -218,10 +218,10 @@ cluster3d <- plot_ly(cluster_set, x = cluster_set[, x],
                      text = ~paste(Number, CommunityName),
                      marker = list(color = ~crime, colorscale = c('#84A98C', '#84A98C'), showscale = TRUE)) %>%
   add_markers() %>%
-  layout(title = paste('Teen Mom, Infant Mortality, & Child Poverty Rate'),
-         scene = list(xaxis = list(title = 'Teen Mom Rate'),
-                      yaxis = list(title = 'Infant Mortality Rate'),
-                      zaxis = list(title = 'Child Poverty Rate')),
+  layout(title = paste('Percent of Hispanic, Black, & White People'),
+         scene = list(xaxis = list(title = 'Percent Black People'),
+                      yaxis = list(title = 'Percent Hispanic People'),
+                      zaxis = list(title = 'Percent White People')),
          annotations = list(
            x = 1.13,
            y = 1.05,
